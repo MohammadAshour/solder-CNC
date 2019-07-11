@@ -10,7 +10,7 @@ int isRunning;                          //to check if maching in runnning mode
 int homming;                            //to check if maching is going to home 0,0
 int plateNum;                           //contains plate number .. the number shown on 7Seg
 int numX,numY,disX,disY;                //variables determind by the plate number
-int currentX,currentY;                  //to where the machine is respecting to home point
+int totalX,totalY;                      //to know where the machine is respecting to home point
 
 void setup() {
   pinMode(d0,OUTPUT);
@@ -52,7 +52,7 @@ void setup() {
   plateNum=0;
   manual=0;
   isRunning=0;
-  currentX=0;currentY=0;
+  totalX=0;totalY=0;
 }
 
 void loop() {
@@ -86,6 +86,7 @@ void loop() {
 
   //start the program if manual not selected
   if(digitalRead(start)&&!manual) isRunning=1;
+
   
   if(homming)goHome();  
   
@@ -93,24 +94,30 @@ void loop() {
     for(int i=0;i<numX/2;i++){
       for(int j=1;j<numY;j++){
         despenser();
-        for(int b=0;b<disY;b++)moveDown();
-        currentY++;
+        for(int b=0;b<disY;b++){
+          moveDown();
+          totalY++;
+        }
       }
       despenser();
-      for(int a=0;a<disX;a++)moveLeft();
-      currentX++;
+      for(int a=0;a<disX;a++){
+        moveLeft();
+        totalX++;  
+      }
       for(int j=1;j<numY;j++){
         despenser();
-        for(int b=0;b<disY;b++)moveUp();
-        currentY--;
+        for(int b=0;b<disY;b++){
+          moveUp();
+          totalY--;
+        }
       }
       despenser(); 
       if(i!=numX/2-1){
-        for(int a=0;a<disX;a++)moveLeft();
-        currentX++;
+        for(int a=0;a<disX;a++){
+          moveLeft();
+          totalX++;
+        }
       }
-      
-      
     }
     isRunning=0;
     homming=1; 
@@ -130,17 +137,15 @@ void resetM(){
 
 void goHome(){
   isRunning=0;
-  int totalX=(currentX-1)*disX;
   for(int i=0;i<totalX;i++){
     moveRight();
   }
-  int totalY=(currentY-1)*disY;
   for(int i=0;i<totalY;i++){
     moveUp();
   }
   homming=0;
-  currentX=0;
-  currentY=0;
+  totalX=0;
+  totalY=0;
 }
 
 void despenser(){
