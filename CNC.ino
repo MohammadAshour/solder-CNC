@@ -200,6 +200,7 @@ void moveLeft(){
   }
 }
 
+
 void showDigit(int x){
   digitalWrite(d0,x%2);
   x/=2;
