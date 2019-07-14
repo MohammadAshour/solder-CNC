@@ -183,8 +183,8 @@ void moveDown(){
 
 
 void moveRight(){
-  digitalWrite(4,isRunning||homming==1);
-  if(isRunning==1){
+  digitalWrite(4,isRunning);
+  if(isRunning==1||homming==1){
     digitalWrite(MR,HIGH);
     delay(100);
     digitalWrite(MR,LOW);
@@ -192,8 +192,8 @@ void moveRight(){
 }
 
 void moveLeft(){
-  digitalWrite(4,isRunning||homming==1);
-  if(isRunning==1){ 
+  digitalWrite(4,isRunning);
+  if(isRunning==1||homming==1){ 
     digitalWrite(ML,HIGH);
     delay(100);
     digitalWrite(ML,LOW);
