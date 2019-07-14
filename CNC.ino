@@ -1,4 +1,5 @@
-int RL=21,BL=20,GL=19;                  //temp pins simulates motors and relay
+#include <EEPROM.h>
+int MU=12,MD=11,MR=13,ML=10,RE=9;       //temp pins simulates motors and relay
 int d0=15,d1=16,d2=17,d3=18;            //4 pins for 7Seg
 int start=29;                           //start button
 int pause=2,reset=3;                    //pause and reset interrupts
@@ -18,9 +19,11 @@ void setup() {
   pinMode(d2,OUTPUT);
   pinMode(d3,OUTPUT);
   
-  pinMode(GL,OUTPUT);
-  pinMode(RL,OUTPUT);
-  pinMode(BL,OUTPUT);
+  pinMode(RE,OUTPUT);
+  pinMode(MU,OUTPUT);
+  pinMode(MD,OUTPUT);
+  pinMode(MR,OUTPUT);
+  pinMode(ML,OUTPUT);
 
   pinMode(start,INPUT);
   pinMode(pause,INPUT);
@@ -44,9 +47,11 @@ void setup() {
   digitalWrite(d1,LOW);  
   digitalWrite(d2,LOW);  
   digitalWrite(d3,LOW);  
-  digitalWrite(GL,LOW);
-  digitalWrite(RL,LOW);
-  digitalWrite(BL,LOW);
+  digitalWrite(RE,LOW);
+  digitalWrite(MU,LOW);
+  digitalWrite(MD,LOW);
+  digitalWrite(MR,LOW);
+  digitalWrite(ML,LOW);
 
   homming=0;
   plateNum=0;
@@ -137,8 +142,9 @@ void resetM(){
 
 void goHome(){
   isRunning=0;
+  EEPROM.write(0,totalX);
   for(int i=0;i<totalX;i++){
-    moveRight();
+    despenser();
   }
   for(int i=0;i<totalY;i++){
     moveUp();
@@ -150,51 +156,47 @@ void goHome(){
 
 void despenser(){
   if(isRunning==1){
-    digitalWrite(GL,HIGH);
+    digitalWrite(RE,HIGH);
     delay(1000);
-    digitalWrite(GL,LOW);   
+    digitalWrite(RE,LOW);   
   }
 }
 
 void moveUp(){
   digitalWrite(4,isRunning);
-  if(isRunning==1){
-    digitalWrite(RL,HIGH);
+  if(isRunning==1||homming==1){
+    digitalWrite(MU,HIGH);
     delay(100);
-    digitalWrite(RL,LOW);
-    delay(100);
+    digitalWrite(MU,LOW);
   }
 }
 
 void moveDown(){
   digitalWrite(4,isRunning);
-  if(isRunning==1){ 
-    digitalWrite(RL,HIGH);
-    delay(200);
-    digitalWrite(RL,LOW);
+  if(isRunning==1||homming==1){ 
+    digitalWrite(MD,HIGH);
     delay(100);
+    digitalWrite(MD,LOW);
   }
 }
 
 
 
 void moveRight(){
-  digitalWrite(4,isRunning);
+  digitalWrite(4,isRunning||homming==1);
   if(isRunning==1){
-    digitalWrite(BL,HIGH);
+    digitalWrite(MR,HIGH);
     delay(100);
-    digitalWrite(BL,LOW);
-    delay(100);
+    digitalWrite(MR,LOW);
   }
 }
 
 void moveLeft(){
-  digitalWrite(4,isRunning);
+  digitalWrite(4,isRunning||homming==1);
   if(isRunning==1){ 
-    digitalWrite(BL,HIGH);
-    delay(200);
-    digitalWrite(BL,LOW);
+    digitalWrite(ML,HIGH);
     delay(100);
+    digitalWrite(ML,LOW);
   }
 }
 
