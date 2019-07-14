@@ -67,7 +67,7 @@ void loop() {
 
   //set variables of the selected plate
   switch(plateNum){
-    case 0: numX=4;numY=3;disX=2;disY=3;break;
+    case 0: numX=2;numY=3;disX=4;disY=4;break;
     case 1: numX=10;numY=20;disX=2;disY=3;break;
     case 2: numX=10;numY=20;disX=2;disY=3;break;
     case 3: numX=10;numY=20;disX=2;disY=3;break;
@@ -97,27 +97,27 @@ void loop() {
   
   while(isRunning){
     for(int i=0;i<numX/2;i++){
-      for(int j=1;j<numY;j++){
-        despenser();
+      for(int j=1;j<numY;j++){                      //despense and move down
+        despenser();                              
         for(int b=0;b<disY;b++){
           moveDown();
           totalY++;
         }
       }
-      despenser();
+      despenser();                                  //despense then move left
       for(int a=0;a<disX;a++){
         moveLeft();
         totalX++;  
       }
-      for(int j=1;j<numY;j++){
+      for(int j=1;j<numY;j++){                      //despense and move up
         despenser();
         for(int b=0;b<disY;b++){
           moveUp();
           totalY--;
         }
       }
-      despenser(); 
-      if(i!=numX/2-1){
+      despenser();                                  //last terminal in the round
+      if(i!=numX/2-1){                              //prevent moving left in the last round
         for(int a=0;a<disX;a++){
           moveLeft();
           totalX++;
@@ -132,7 +132,7 @@ void loop() {
 
 void pauseM(){
   isRunning=0;
-  digitalWrite(4,HIGH);
+  homming=0;
 }
 
 void resetM(){
@@ -141,23 +141,19 @@ void resetM(){
 }
 
 void goHome(){
-  isRunning=0;
-  EEPROM.write(0,totalX);
-  for(int i=0;i<totalX;i++){
+  for(totalX;totalX>0;totalX--){
     moveRight();
   }
-  for(int i=0;i<totalY;i++){
+  for(totalY;totalY>0;totalY--){
     moveUp();
   }
   homming=0;
-  totalX=0;
-  totalY=0;
 }
 
 void despenser(){
   if(isRunning==1){
     digitalWrite(RE,HIGH);
-    delay(1000);
+    delay(500);
     digitalWrite(RE,LOW);   
   }
 }
@@ -173,7 +169,7 @@ void moveUp(){
 
 void moveDown(){
   digitalWrite(4,isRunning);
-  if(isRunning==1||homming==1){ 
+  if(isRunning==1){ 
     digitalWrite(MD,HIGH);
     delay(100);
     digitalWrite(MD,LOW);
@@ -193,7 +189,7 @@ void moveRight(){
 
 void moveLeft(){
   digitalWrite(4,isRunning);
-  if(isRunning==1||homming==1){ 
+  if(isRunning==1){ 
     digitalWrite(ML,HIGH);
     delay(100);
     digitalWrite(ML,LOW);
