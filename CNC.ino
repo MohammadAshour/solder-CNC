@@ -144,7 +144,7 @@ void goHome(){
   isRunning=0;
   EEPROM.write(0,totalX);
   for(int i=0;i<totalX;i++){
-    despenser();
+    moveRight();
   }
   for(int i=0;i<totalY;i++){
     moveUp();
