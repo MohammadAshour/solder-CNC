@@ -4,7 +4,7 @@ int d0=15,d1=16,d2=17,d3=18;            //4 pins for 7Seg
 int start=29;                           //start button
 int pause=2,reset=3;                    //pause and reset interrupts
 int up=26,right=25,left=24,down=23;     //directions for manual control
-int switchmanual=22;                    //switch for choosing manual control
+int switchManual=22;                    //switch for choosing manual control
 
 bool paused;                            //to pause running program
 int manual;                             //to check if manual mode is activated
@@ -30,7 +30,7 @@ void setup() {
   pinMode(pause,INPUT);
   pinMode(reset,INPUT);
 
-  pinMode(switchmanual,INPUT);
+  pinMode(switchManual,INPUT);
   pinMode(up,INPUT);
   pinMode(right,INPUT);
   pinMode(down,INPUT);
@@ -83,7 +83,7 @@ void loop() {
   }
 
   //selecting mode
-  if(digitalRead(switchmanual))manual=1;
+  if(digitalRead(switchManual))manual=1;
   else manual=0;
 
   //manual control if manual is selected
@@ -165,7 +165,7 @@ void despenser(){
 
 void moveUp(){
   while(paused){delay(10);}
-  if(isRunning==1||homming==1){
+  if(isRunning==1||homming==1||manual){
     digitalWrite(MU,HIGH);
     delay(100);
     digitalWrite(MU,LOW);
@@ -174,7 +174,7 @@ void moveUp(){
 
 void moveDown(){
   while(paused){delay(10);}
-  if(isRunning==1){ 
+  if(isRunning==1||manual){ 
     digitalWrite(MD,HIGH);
     delay(100);
     digitalWrite(MD,LOW);
@@ -185,7 +185,7 @@ void moveDown(){
 
 void moveRight(){
   while(paused){delay(10);}
-  if(isRunning==1||homming==1){
+  if(isRunning==1||homming==1||manual){
     digitalWrite(MR,HIGH);
     delay(100);
     digitalWrite(MR,LOW);
@@ -194,7 +194,7 @@ void moveRight(){
 
 void moveLeft(){
   while(paused){delay(10);}
-  if(isRunning==1){ 
+  if(isRunning==1||manual){ 
     digitalWrite(ML,HIGH);
     delay(100);
     digitalWrite(ML,LOW);
