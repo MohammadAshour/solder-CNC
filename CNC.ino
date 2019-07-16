@@ -6,6 +6,7 @@ int pause=2,reset=3;                    //pause and reset interrupts
 int up=26,right=25,left=24,down=23;     //directions for manual control
 int switchmanual=22;                    //switch for choosing manual control
 
+bool paused;                            //to pause running program
 int manual;                             //to check if manual mode is activated
 int isRunning;                          //to check if maching in runnning mode
 int homming;                            //to check if maching is going to home 0,0
@@ -58,17 +59,19 @@ void setup() {
   manual=0;
   isRunning=0;
   totalX=0;totalY=0;
+  paused=false;  
 }
 
 void loop() {
   //get plate number from the potentiometer and display it on the 7Seg
-  plateNum=analogRead(0)*9/1023;
+  plateNum=analogRead(0)*9/1023;            //map potentiometer reading to 0-9 value
   showDigit(plateNum);
 
   //set variables of the selected plate
+  //numX must be even number or last column will be neglected
   switch(plateNum){
-    case 0: numX=2;numY=3;disX=4;disY=4;break;
-    case 1: numX=10;numY=20;disX=2;disY=3;break;
+    case 0: numX=4;numY=3;disX=5;disY=4;break;
+    case 1: numX=4;numY=3;disX=20;disY=30;break;
     case 2: numX=10;numY=20;disX=2;disY=3;break;
     case 3: numX=10;numY=20;disX=2;disY=3;break;
     case 4: numX=10;numY=20;disX=2;disY=3;break;
@@ -131,16 +134,17 @@ void loop() {
 
 
 void pauseM(){
-  isRunning=0;
-  homming=0;
+  paused=!paused;
 }
 
 void resetM(){
-  isRunning=0;
-  homming=1;
+  isRunning=0;                            //to break moving functions         down,left and despenser
+  homming=1;                              //to start going home functions     right and up
 }
 
 void goHome(){
+  while(paused){delay(10);}
+  
   for(totalX;totalX>0;totalX--){
     moveRight();
   }
@@ -151,6 +155,7 @@ void goHome(){
 }
 
 void despenser(){
+  while(paused){delay(10);}
   if(isRunning==1){
     digitalWrite(RE,HIGH);
     delay(500);
@@ -159,7 +164,7 @@ void despenser(){
 }
 
 void moveUp(){
-  digitalWrite(4,isRunning);
+  while(paused){delay(10);}
   if(isRunning==1||homming==1){
     digitalWrite(MU,HIGH);
     delay(100);
@@ -168,7 +173,7 @@ void moveUp(){
 }
 
 void moveDown(){
-  digitalWrite(4,isRunning);
+  while(paused){delay(10);}
   if(isRunning==1){ 
     digitalWrite(MD,HIGH);
     delay(100);
@@ -179,7 +184,7 @@ void moveDown(){
 
 
 void moveRight(){
-  digitalWrite(4,isRunning);
+  while(paused){delay(10);}
   if(isRunning==1||homming==1){
     digitalWrite(MR,HIGH);
     delay(100);
@@ -188,7 +193,7 @@ void moveRight(){
 }
 
 void moveLeft(){
-  digitalWrite(4,isRunning);
+  while(paused){delay(10);}
   if(isRunning==1){ 
     digitalWrite(ML,HIGH);
     delay(100);
