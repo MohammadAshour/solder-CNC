@@ -1,13 +1,10 @@
 #include <EEPROM.h>
 int MU=12,MD=11,MR=13,ML=10,RE=9;       //temp pins simulates motors and relay
-int d0=15,d1=16,d2=17,d3=18;            //4 pins for 7Seg
 int start=29;                           //start button
-int pause=2,reset=3;                    //pause and reset interrupts
-int up=26,right=25,left=24,down=23;     //directions for manual control
-int switchManual=22;                    //switch for choosing manual control
+int reset=3;                            //pause and reset interrupts
 
-bool paused;                            //to pause running program
-int manual;                             //to check if manual mode is activated
+int s1=26,s2=27,s3=28;
+
 int isRunning;                          //to check if maching in runnning mode
 int homming;                            //to check if maching is going to home 0,0
 int plateNum;                           //contains plate number .. the number shown on 7Seg
@@ -15,10 +12,9 @@ int numX,numY,disX,disY;                //variables determind by the plate numbe
 int totalX,totalY;                      //to know where the machine is respecting to home point
 
 void setup() {
-  pinMode(d0,OUTPUT);
-  pinMode(d1,OUTPUT);
-  pinMode(d2,OUTPUT);
-  pinMode(d3,OUTPUT);
+  pinMode(s1,INPUT);
+  pinMode(s2,INPUT);
+  pinMode(s3,INPUT);
   
   pinMode(RE,OUTPUT);
   pinMode(MU,OUTPUT);
@@ -27,27 +23,9 @@ void setup() {
   pinMode(ML,OUTPUT);
 
   pinMode(start,INPUT);
-  pinMode(pause,INPUT);
-  pinMode(reset,INPUT);
 
-  pinMode(switchManual,INPUT);
-  pinMode(up,INPUT);
-  pinMode(right,INPUT);
-  pinMode(down,INPUT);
-  pinMode(left,INPUT);
-  
-  pinMode(0,INPUT);
-
-  //for depugging
-  pinMode(4,OUTPUT);
-
-  attachInterrupt(0,pauseM,RISING);
   attachInterrupt(1,resetM,RISING);
 
-  digitalWrite(d0,LOW);  
-  digitalWrite(d1,LOW);  
-  digitalWrite(d2,LOW);  
-  digitalWrite(d3,LOW);  
   digitalWrite(RE,LOW);
   digitalWrite(MU,LOW);
   digitalWrite(MD,LOW);
@@ -56,44 +34,36 @@ void setup() {
 
   homming=0;
   plateNum=0;
-  manual=0;
   isRunning=0;
   totalX=0;totalY=0;
-  paused=false;  
 }
 
 void loop() {
-  //get plate number from the potentiometer and display it on the 7Seg
-  plateNum=analogRead(0)*9/1023;            //map potentiometer reading to 0-9 value
-  showDigit(plateNum);
+  plateNum=0;
+  if(digitalRead(s1))plateNum+=1;
+  if(digitalRead(s2))plateNum+=2;
+  if(digitalRead(s3))plateNum+=4;
+
+  EEPROM.write(0,plateNum);
+  
 
   //set variables of the selected plate
   //numX must be even number or last column will be neglected
   switch(plateNum){
-    case 0: numX=4;numY=3;disX=5;disY=4;break;
-    case 1: numX=4;numY=3;disX=20;disY=30;break;
-    case 2: numX=10;numY=20;disX=2;disY=3;break;
-    case 3: numX=10;numY=20;disX=2;disY=3;break;
-    case 4: numX=10;numY=20;disX=2;disY=3;break;
-    case 5: numX=10;numY=20;disX=2;disY=3;break;
-    case 6: numX=10;numY=20;disX=2;disY=3;break;
-    case 7: numX=10;numY=20;disX=2;disY=3;break;
-    case 8: numX=10;numY=20;disX=2;disY=3;break;
-    case 9: numX=10;numY=20;disX=2;disY=3;break;
+    case 0: numX=10;numY=7;disX=5;disY=4;break;
+    case 1: numX=4;numY=5;disX=5;disY=5;break;
+    case 2: numX=7;numY=7;disX=2;disY=3;break;
+    case 3: numX=2;numY=1;disX=2;disY=3;break;
+    case 4: numX=2;numY=1;disX=2;disY=3;break;
+    case 5: numX=2;numY=1;disX=2;disY=3;break;
+    case 6: numX=2;numY=1;disX=2;disY=3;break;
+    case 7: numX=2;numY=1;disX=2;disY=3;break;
   }
 
-  //selecting mode
-  if(digitalRead(switchManual))manual=1;
-  else manual=0;
-
-  //manual control if manual is selected
-  if(digitalRead(up)&&manual) moveUp();
-  if(digitalRead(down)&&manual) moveDown();
-  if(digitalRead(right)&&manual) moveRight();
-  if(digitalRead(left)&&manual) moveLeft();
-
-  //start the program if manual not selected
-  if(digitalRead(start)&&!manual) isRunning=1;
+  
+  
+  //start the program
+  if(digitalRead(start)) isRunning=1;
 
   
   if(homming)goHome();  
@@ -133,18 +103,12 @@ void loop() {
 }
 
 
-void pauseM(){
-  paused=!paused;
-}
-
 void resetM(){
   isRunning=0;                            //to break moving functions         down,left and despenser
   homming=1;                              //to start going home functions     right and up
 }
 
 void goHome(){
-  while(paused){delay(10);}
-  
   for(totalX;totalX>0;totalX--){
     moveRight();
   }
@@ -155,7 +119,6 @@ void goHome(){
 }
 
 void despenser(){
-  while(paused){delay(10);}
   if(isRunning==1){
     digitalWrite(RE,HIGH);
     delay(500);
@@ -164,8 +127,7 @@ void despenser(){
 }
 
 void moveUp(){
-  while(paused){delay(10);}
-  if(isRunning==1||homming==1||manual){
+  if(isRunning==1||homming==1){
     digitalWrite(MU,HIGH);
     delay(100);
     digitalWrite(MU,LOW);
@@ -173,8 +135,7 @@ void moveUp(){
 }
 
 void moveDown(){
-  while(paused){delay(10);}
-  if(isRunning==1||manual){ 
+  if(isRunning==1){ 
     digitalWrite(MD,HIGH);
     delay(100);
     digitalWrite(MD,LOW);
@@ -184,8 +145,7 @@ void moveDown(){
 
 
 void moveRight(){
-  while(paused){delay(10);}
-  if(isRunning==1||homming==1||manual){
+  if(isRunning==1||homming==1){
     digitalWrite(MR,HIGH);
     delay(100);
     digitalWrite(MR,LOW);
@@ -193,21 +153,9 @@ void moveRight(){
 }
 
 void moveLeft(){
-  while(paused){delay(10);}
-  if(isRunning==1||manual){ 
+  if(isRunning==1){ 
     digitalWrite(ML,HIGH);
     delay(100);
     digitalWrite(ML,LOW);
   }
-}
-
-
-void showDigit(int x){
-  digitalWrite(d0,x%2);
-  x/=2;
-  digitalWrite(d1,x%2);
-  x/=2;
-  digitalWrite(d2,x%2);
-  x/=2;
-  digitalWrite(d3,x%2);
 }
