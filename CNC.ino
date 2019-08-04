@@ -9,7 +9,7 @@ int limitUp=A4,limitLeft=A5;
 
 int s1=6,s2=5,s3=4;
 
-int isRunning;                          //to check if maching in runnning mode
+int running;                          //to check if maching in runnning mode
 int homming;                            //to check if maching is going to home 0,0
 int stopUp,stopLeft;                    //to check if border reached
 int plateNum;                           //contains plate number .. the number shown on 7Seg
@@ -49,7 +49,7 @@ void setup() {
   stopUp=0;
   stopLeft=0;
   plateNum=0;
-  isRunning=0;
+  running=0;
 }
 
 void loop() {
@@ -75,12 +75,12 @@ void loop() {
   
   
   //start the program
-  if(digitalRead(start)) isRunning=1;
+  if(digitalRead(start)) running=1;
 
   
   if(homming)goHome();  
   
-  while(isRunning){
+  while(running){
     for(int i=0;i<numX/2;i++){
         
       for(int j=1;j<numY;j++){                      //despense and move down
@@ -102,30 +102,30 @@ void loop() {
       }
     
     }
-    isRunning=0;
+    running=0;
   }
 }
 
 
 void resetM(){
-  isRunning=0;                            //to break moving functions         down,left and despenser
-  homming=1;                              //to start going home functions     right and up
-  stopUp=0;
+  running=0;                                      //to break moving functions
+  homming=1;                                        //to start going home function  
+  stopUp=0;                                         //limits switches checkers
   stopLeft=0;
 }
 
 void goHome(){
-  while(!stopUp||!stopLeft){
-    if(digitalRead(limitUp))stopUp=1;
-    if(digitalRead(limitLeft))stopLeft=1;
-    if(!stopUp)S_CY();
-    if(!stopLeft)S_CCX();
+  while(!stopUp||!stopLeft){                        //if any limit switch not reached, continue
+    if(digitalRead(limitUp))stopUp=1;               //upper limit reached
+    if(digitalRead(limitLeft))stopLeft=1;           //letf limit reached
+    if(!stopUp)S_CY();                              //if upper limit not reached move up
+    if(!stopLeft)S_CCX();                           //if left limit not reached move left
   }
   homming=0;
 }
 
 void despenser(){
-  if(isRunning==1){
+  if(running){
     digitalWrite(RE,HIGH);
     delay(Ddelay);
     digitalWrite(RE,LOW);   
@@ -250,19 +250,17 @@ void S_CX(){                                                //step counter clock
 
 void moveUp(int steps){
   for(int i=0;i<steps;i++){
-    if(isRunning==1||homming==1){
-      S_CY();
-      delay(Mdelay);
-    }
-  }
+    if(!running){EEPROM.write(0,1);break;}            //for test // doesnot work without it for no reason
+    S_CY();
+    delay(Mdelay);
+ }
 }
 
 void moveDown(int steps){
   for(int i=0;i<steps;i++){
-    if(isRunning==1){
-      S_CCY();
-      delay(Mdelay);
-    }
+    if(!running)break;
+    S_CCY();
+    delay(Mdelay);
   }
 }
 
@@ -270,18 +268,16 @@ void moveDown(int steps){
 
 void moveRight(int steps){
   for(int i=0;i<steps;i++){
-    if(isRunning==1){
-      S_CX();
-      delay(Mdelay);
-    }
+    if(!running)break;
+    S_CX();
+    delay(Mdelay);
   }
 }
 
 void moveLeft(int steps){
   for(int i=0;i<steps;i++){
-    if(isRunning==1||homming==1){
-      S_CCX();
-      delay(Mdelay);
-    }
+    if(!running)break;
+    S_CCX();
+    delay(Mdelay);
   }
 }
