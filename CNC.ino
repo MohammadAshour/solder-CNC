@@ -98,7 +98,6 @@ void loop() {
     
     }
     isRunning=0;
-    homming=1; 
   }
 }
 
@@ -111,6 +110,7 @@ void resetM(){
 void goHome(){
   moveLeft(totalX);
   moveUp(totalY);
+  homming=0;
 }
 
 void despenser(){
