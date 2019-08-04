@@ -120,6 +120,8 @@ void despenser(){
     digitalWrite(RE,LOW);   
   }
 }
+
+
 void idle(){
    digitalWrite(MX0,LOW);
    digitalWrite(MX1,LOW);
@@ -135,7 +137,7 @@ void idle(){
 }
 
 
-void S_CY(){
+void S_CY(){                                  //step clock wise motor Y
      switch(Ystatus){
       case 0:
          digitalWrite(MY3,LOW);
@@ -160,7 +162,7 @@ void S_CY(){
       }
 }
 
-void S_CCY(){
+void S_CCY(){                                         //step counter clock wise motor Y
    switch(Ystatus){
       case 0:
          digitalWrite(MY1,LOW);
@@ -185,7 +187,7 @@ void S_CCY(){
       }
 }
 
-void S_CCX(){
+void S_CCX(){                                           //step clock wise motor X
    switch(Xstatus){
       case 0:
          digitalWrite(MX1,LOW);
@@ -210,7 +212,7 @@ void S_CCX(){
       }
 }
 
-void S_CX(){
+void S_CX(){                                                //step counter clock wise motor X
      switch(Xstatus){
       case 0:
          digitalWrite(MX3,LOW);
@@ -236,8 +238,8 @@ void S_CX(){
 }
 
 void moveUp(int steps){
-  if(isRunning==1||homming==1){
-    for(int i=0;i<steps;i++){
+  for(int i=0;i<steps;i++){
+    if(isRunning==1||homming==1){
       S_CY();
       totalY--;
       delay(Mdelay);
@@ -246,8 +248,8 @@ void moveUp(int steps){
 }
 
 void moveDown(int steps){
-  if(isRunning==1){
-    for(int i=0;i<steps;i++){
+  for(int i=0;i<steps;i++){
+    if(isRunning==1){
       S_CCY();
       totalY++;
       delay(Mdelay);
@@ -258,8 +260,8 @@ void moveDown(int steps){
 
 
 void moveRight(int steps){
-  if(isRunning==1){
-    for(int i=0;i<steps;i++){
+  for(int i=0;i<steps;i++){
+    if(isRunning==1){
       S_CX();
       totalX++;
       delay(Mdelay);
@@ -268,8 +270,8 @@ void moveRight(int steps){
 }
 
 void moveLeft(int steps){
-  if(isRunning==1||homming==1){
-    for(int i=0;i<steps;i++){
+  for(int i=0;i<steps;i++){
+    if(isRunning==1||homming==1){
       S_CCX();
       totalX--;
       delay(Mdelay);
