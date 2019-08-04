@@ -1,23 +1,25 @@
 #include <EEPROM.h>
-int MX0=11,MX1=10,MX2=12,MX3=9;         //X motor
-int MY0=A1,MY1=A2,MY2=A3,MY3=A0;        //Y motor
+int MX0=9,MX1=10,MX2=11,MX3=12;         //X motor
+int MY0=A0,MY1=A1,MY2=A2,MY3=A3;        //Y motor
 int RE=8;                               //Pedal relay
 int start=3;                            //start button
 int reset=2;                            //pause and reset interrupts
+int limitUp=A4,limitLeft=A5;
+
 
 int s1=6,s2=5,s3=4;
 
 int isRunning;                          //to check if maching in runnning mode
 int homming;                            //to check if maching is going to home 0,0
+int stopUp,stopLeft;                    //to check if border reached
 int plateNum;                           //contains plate number .. the number shown on 7Seg
 int numX,numY,disX,disY;                //variables determind by the plate number
-int totalX,totalY;                      //to know where the machine is respecting to home point
 
 
 int Ystatus=0;                          //Motors status
 int Xstatus=0;
 
-int Mdelay=50;                           //delay for motors         
+int Mdelay=100;                           //delay for motors         
 int Ddelay=1000;                        //delay for despenser
 
 void setup() {
@@ -35,16 +37,19 @@ void setup() {
   pinMode(MY2,OUTPUT);
   pinMode(MY3,OUTPUT);
   
+  pinMode(limitUp,INPUT);
+  pinMode(limitLeft,INPUT);
   pinMode(start,INPUT);
-
+  
   attachInterrupt(0,resetM,RISING);
 
   idle();
 
   homming=0;
+  stopUp=0;
+  stopLeft=0;
   plateNum=0;
   isRunning=0;
-  totalX=0;totalY=0;
 }
 
 void loop() {
@@ -105,11 +110,17 @@ void loop() {
 void resetM(){
   isRunning=0;                            //to break moving functions         down,left and despenser
   homming=1;                              //to start going home functions     right and up
+  stopUp=0;
+  stopLeft=0;
 }
 
 void goHome(){
-  moveLeft(totalX);
-  moveUp(totalY);
+  while(!stopUp||!stopLeft){
+    if(digitalRead(limitUp))stopUp=1;
+    if(digitalRead(limitLeft))stopLeft=1;
+    if(!stopUp)S_CY();
+    if(!stopLeft)S_CCX();
+  }
   homming=0;
 }
 
@@ -241,7 +252,6 @@ void moveUp(int steps){
   for(int i=0;i<steps;i++){
     if(isRunning==1||homming==1){
       S_CY();
-      totalY--;
       delay(Mdelay);
     }
   }
@@ -251,7 +261,6 @@ void moveDown(int steps){
   for(int i=0;i<steps;i++){
     if(isRunning==1){
       S_CCY();
-      totalY++;
       delay(Mdelay);
     }
   }
@@ -263,7 +272,6 @@ void moveRight(int steps){
   for(int i=0;i<steps;i++){
     if(isRunning==1){
       S_CX();
-      totalX++;
       delay(Mdelay);
     }
   }
@@ -273,7 +281,6 @@ void moveLeft(int steps){
   for(int i=0;i<steps;i++){
     if(isRunning==1||homming==1){
       S_CCX();
-      totalX--;
       delay(Mdelay);
     }
   }
