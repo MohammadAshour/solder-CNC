@@ -1,9 +1,11 @@
 #include <EEPROM.h>
-int MU=12,MD=11,MR=13,ML=10,RE=9;       //temp pins simulates motors and relay
-int start=29;                           //start button
-int reset=3;                            //pause and reset interrupts
+int MX0=11,MX1=10,MX2=12,MX3=9;         //X motor
+int MY0=A1,MY1=A2,MY2=A3,MY3=A0;        //Y motor
+int RE=8;                               //Pedal relay
+int start=3;                            //start button
+int reset=2;                            //pause and reset interrupts
 
-int s1=26,s2=27,s3=28;
+int s1=6,s2=5,s3=4;
 
 int isRunning;                          //to check if maching in runnning mode
 int homming;                            //to check if maching is going to home 0,0
@@ -11,26 +13,33 @@ int plateNum;                           //contains plate number .. the number sh
 int numX,numY,disX,disY;                //variables determind by the plate number
 int totalX,totalY;                      //to know where the machine is respecting to home point
 
+
+int Ystatus=0;                          //Motors status
+int Xstatus=0;
+
+int Mdelay=5;                           //delay for motors         
+int Ddelay=1000;                        //delay for despenser
+
 void setup() {
   pinMode(s1,INPUT);
   pinMode(s2,INPUT);
   pinMode(s3,INPUT);
   
   pinMode(RE,OUTPUT);
-  pinMode(MU,OUTPUT);
-  pinMode(MD,OUTPUT);
-  pinMode(MR,OUTPUT);
-  pinMode(ML,OUTPUT);
-
+  pinMode(MX0,OUTPUT);
+  pinMode(MX1,OUTPUT);
+  pinMode(MX2,OUTPUT);
+  pinMode(MX3,OUTPUT);
+  pinMode(MY0,OUTPUT);
+  pinMode(MY1,OUTPUT);
+  pinMode(MY2,OUTPUT);
+  pinMode(MY3,OUTPUT);
+  
   pinMode(start,INPUT);
 
-  attachInterrupt(1,resetM,RISING);
+  attachInterrupt(0,resetM,RISING);
 
-  digitalWrite(RE,LOW);
-  digitalWrite(MU,LOW);
-  digitalWrite(MD,LOW);
-  digitalWrite(MR,LOW);
-  digitalWrite(ML,LOW);
+  idle();
 
   homming=0;
   plateNum=0;
@@ -43,8 +52,6 @@ void loop() {
   if(digitalRead(s1))plateNum+=1;
   if(digitalRead(s2))plateNum+=2;
   if(digitalRead(s3))plateNum+=4;
-
-  EEPROM.write(0,plateNum);
   
 
   //set variables of the selected plate
@@ -70,32 +77,25 @@ void loop() {
   
   while(isRunning){
     for(int i=0;i<numX/2;i++){
+        
       for(int j=1;j<numY;j++){                      //despense and move down
         despenser();                              
-        for(int b=0;b<disY;b++){
-          moveDown();
-          totalY++;
-        }
+        moveDown(disY);
       }
+      
       despenser();                                  //despense then move left
-      for(int a=0;a<disX;a++){
-        moveLeft();
-        totalX++;  
-      }
+      moveRight(disX);
+      
       for(int j=1;j<numY;j++){                      //despense and move up
         despenser();
-        for(int b=0;b<disY;b++){
-          moveUp();
-          totalY--;
-        }
+        moveUp(disY);
       }
+      
       despenser();                                  //last terminal in the round
       if(i!=numX/2-1){                              //prevent moving left in the last round
-        for(int a=0;a<disX;a++){
-          moveLeft();
-          totalX++;
-        }
+        moveRight(disX);
       }
+    
     }
     isRunning=0;
     homming=1; 
@@ -109,13 +109,8 @@ void resetM(){
 }
 
 void goHome(){
-  for(totalX;totalX>0;totalX--){
-    moveRight();
-  }
-  for(totalY;totalY>0;totalY--){
-    moveUp();
-  }
-  homming=0;
+  moveLeft(totalX);
+  moveUp(totalY);
 }
 
 void despenser(){
@@ -125,37 +120,159 @@ void despenser(){
     digitalWrite(RE,LOW);   
   }
 }
+void idle(){
+   digitalWrite(MX0,LOW);
+   digitalWrite(MX1,LOW);
+   digitalWrite(MX2,LOW);
+   digitalWrite(MX3,LOW);
+   
+   digitalWrite(MY0,LOW);
+   digitalWrite(MY1,LOW);
+   digitalWrite(MY2,LOW);
+   digitalWrite(MY3,LOW);
+   
+   digitalWrite(RE,LOW);
+}
 
-void moveUp(){
+
+void S_CY(){
+     switch(Ystatus){
+      case 0:
+         digitalWrite(MY3,LOW);
+         digitalWrite(MY1,HIGH);
+         Ystatus=1;
+         break;
+      case 1:
+         digitalWrite(MY0,LOW);
+         digitalWrite(MY2,HIGH);
+         Ystatus=2;
+         break; 
+      case 2:
+         digitalWrite(MY1,LOW);
+         digitalWrite(MY3,HIGH);
+         Ystatus=3;
+         break;
+      case 3:
+         digitalWrite(MY2,LOW);
+         digitalWrite(MY0,HIGH);
+         Ystatus=0;
+         break;
+      }
+}
+
+void S_CCY(){
+   switch(Ystatus){
+      case 0:
+         digitalWrite(MY1,LOW);
+         digitalWrite(MY3,HIGH);
+         Ystatus=3;
+         break;
+      case 3:
+         digitalWrite(MY0,LOW);
+         digitalWrite(MY2,HIGH);
+         Ystatus=2;
+         break; 
+      case 2:
+         digitalWrite(MY3,LOW);
+         digitalWrite(MY1,HIGH);
+         Ystatus=1;
+         break;
+      case 1:
+         digitalWrite(MY2,LOW);
+         digitalWrite(MY0,HIGH);
+         Ystatus=0;
+         break;
+      }
+}
+
+void S_CCX(){
+   switch(Xstatus){
+      case 0:
+         digitalWrite(MX1,LOW);
+         digitalWrite(MX3,HIGH);
+         Xstatus=3;
+         break;
+      case 3:
+         digitalWrite(MX0,LOW);
+         digitalWrite(MX2,HIGH);
+         Xstatus=2;
+         break; 
+      case 2:
+         digitalWrite(MX3,LOW);
+         digitalWrite(MX1,HIGH);
+         Xstatus=1;
+         break;
+      case 1:
+         digitalWrite(MX2,LOW);
+         digitalWrite(MX0,HIGH);
+         Xstatus=0;
+         break;
+      }
+}
+
+void S_CX(){
+     switch(Xstatus){
+      case 0:
+         digitalWrite(MX3,LOW);
+         digitalWrite(MX1,HIGH);
+         Xstatus=1;
+         break;
+      case 1:
+         digitalWrite(MX0,LOW);
+         digitalWrite(MX2,HIGH);
+         Xstatus=2;
+         break; 
+      case 2:
+         digitalWrite(MX1,LOW);
+         digitalWrite(MX3,HIGH);
+         Xstatus=3;
+         break;
+      case 3:
+         digitalWrite(MX2,LOW);
+         digitalWrite(MX0,HIGH);
+         Xstatus=0;
+         break;
+      }
+}
+
+void moveUp(int steps){
   if(isRunning==1||homming==1){
-    digitalWrite(MU,HIGH);
-    delay(100);
-    digitalWrite(MU,LOW);
+    for(int i=0;i<steps;i++){
+      S_CY();
+      totalY--;
+      delay(Mdelay);
+    }
   }
 }
 
-void moveDown(){
-  if(isRunning==1){ 
-    digitalWrite(MD,HIGH);
-    delay(100);
-    digitalWrite(MD,LOW);
+void moveDown(int steps){
+  if(isRunning==1){
+    for(int i=0;i<steps;i++){
+      S_CCY();
+      totalY++;
+      delay(Mdelay);
+    }
   }
 }
 
 
 
-void moveRight(){
+void moveRight(int steps){
+  if(isRunning==1){
+    for(int i=0;i<steps;i++){
+      S_CX();
+      totalX++;
+      delay(Mdelay);
+    }
+  }
+}
+
+void moveLeft(int steps){
   if(isRunning==1||homming==1){
-    digitalWrite(MR,HIGH);
-    delay(100);
-    digitalWrite(MR,LOW);
-  }
-}
-
-void moveLeft(){
-  if(isRunning==1){ 
-    digitalWrite(ML,HIGH);
-    delay(100);
-    digitalWrite(ML,LOW);
+    for(int i=0;i<steps;i++){
+      S_CCX();
+      totalX--;
+      delay(Mdelay);
+    }
   }
 }
