@@ -17,7 +17,7 @@ int totalX,totalY;                      //to know where the machine is respectin
 int Ystatus=0;                          //Motors status
 int Xstatus=0;
 
-int Mdelay=5;                           //delay for motors         
+int Mdelay=50;                           //delay for motors         
 int Ddelay=1000;                        //delay for despenser
 
 void setup() {
@@ -57,8 +57,8 @@ void loop() {
   //set variables of the selected plate
   //numX must be even number or last column will be neglected
   switch(plateNum){
-    case 0: numX=10;numY=7;disX=5;disY=4;break;
-    case 1: numX=4;numY=5;disX=5;disY=5;break;
+    case 0: numX=10;numY=7;disX=10;disY=20;break;
+    case 1: numX=4;numY=5;disX=15;disY=20;break;
     case 2: numX=7;numY=7;disX=2;disY=3;break;
     case 3: numX=2;numY=1;disX=2;disY=3;break;
     case 4: numX=2;numY=1;disX=2;disY=3;break;
@@ -116,7 +116,7 @@ void goHome(){
 void despenser(){
   if(isRunning==1){
     digitalWrite(RE,HIGH);
-    delay(500);
+    delay(Ddelay);
     digitalWrite(RE,LOW);   
   }
 }
