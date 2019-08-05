@@ -64,7 +64,7 @@ void loop() {
   //set variables of the selected plate
   //numX must be even number or last column will be neglected
   switch(plateNum){
-    case 0: numX=5;numY=3;disX=137;disY=175;break;
+    case 0: numX=3;numY=3;disX=137;disY=175;break;
     case 1: numX=4;numY=5;disX=15;disY=20;break;
     case 2: numX=7;numY=7;disX=2;disY=3;break;
     case 3: numX=2;numY=1;disX=2;disY=3;break;
@@ -126,20 +126,18 @@ void resetM(){
 }
 
 void goHome(){
-/*  while(!stopUp||!stopLeft){                        //if any limit switch not reached, continue
+  while(!stopUp||!stopLeft){                        //if any limit switch not reached, continue
     //if(digitalRead(limitUp))stopUp=1;               //upper limit reached
     //if(digitalRead(limitLeft))stopLeft=1;           //letf limit reached
-    if(!stopUp)S_CY();                              //if upper limit not reached move up
-    if(!stopLeft)S_CCX();                           //if left limit not reached move left
+    char c=Serial.read();
+    if(c=='w') stopUp=1;                //limit switches simu
+    if(c=='a') stopLeft=1;
+    
+    if(!stopUp)S_CCX();                              //if upper limit not reached move up
+    if(!stopLeft)S_CY();                           //if left limit not reached move left
+    delay(Mdelay);
     
   }
-   */
-   while(1){            //test homming
-      S_CY();
-      S_CCX();
-      delay(Mdelay);
-      if(Serial.read()=='s') break;
-    }
   homming=0;
 }
 
