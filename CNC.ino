@@ -147,104 +147,135 @@ void idle(){
    digitalWrite(RE,LOW);
 }
 
+void S_CX(){                                  //step clock wise motor Y
+     switch(Xstatus){
+      case 0:
+        digitalWrite(MX0,HIGH);
+        digitalWrite(MX1,LOW);
+        digitalWrite(MX2,HIGH);
+        digitalWrite(MX3,LOW);
+        Xstatus=1;
+        break;
+      case 1:
+        digitalWrite(MX0,LOW);
+        digitalWrite(MX1,HIGH);
+        digitalWrite(MX2,HIGH);
+        digitalWrite(MX3,LOW);
+        Xstatus=2;
+        break; 
+      case 2:
+        digitalWrite(MX0,LOW);
+        digitalWrite(MX1,HIGH);
+        digitalWrite(MX2,LOW);
+        digitalWrite(MX3,HIGH);
+        Xstatus=3;
+        break;
+      case 3:
+        digitalWrite(MX0,HIGH);
+        digitalWrite(MX1,LOW);
+        digitalWrite(MX2,LOW);
+        digitalWrite(MX3,HIGH);
+        Xstatus=0;
+        break;
+      }
+}
+
+void S_CCX(){                                         //step counter clock wise motor Y
+   switch(Xstatus){
+      case 0:
+        digitalWrite(MX0,LOW);
+        digitalWrite(MX1,HIGH);
+        digitalWrite(MX2,LOW);
+        digitalWrite(MX3,HIGH);
+        Xstatus=3;
+        break;
+      case 3:
+        digitalWrite(MX0,LOW);
+        digitalWrite(MX1,HIGH);
+        digitalWrite(MX2,HIGH);
+        digitalWrite(MX3,LOW);
+        Xstatus=2;
+        break; 
+      case 2:
+        digitalWrite(MX0,HIGH);
+        digitalWrite(MX1,LOW);
+        digitalWrite(MX2,HIGH);
+        digitalWrite(MX3,LOW);
+        Xstatus=1;
+        break;
+      case 1:
+        digitalWrite(MX0,HIGH);
+        digitalWrite(MX1,LOW);
+        digitalWrite(MX2,LOW);
+        digitalWrite(MX3,HIGH);
+        Xstatus=0;
+        break;
+      }
+}
 
 void S_CY(){                                  //step clock wise motor Y
      switch(Ystatus){
       case 0:
-         digitalWrite(MY3,LOW);
-         digitalWrite(MY1,HIGH);
-         Ystatus=1;
-         break;
+        digitalWrite(MY0,HIGH);
+        digitalWrite(MY1,LOW);
+        digitalWrite(MY2,HIGH);
+        digitalWrite(MY3,LOW);
+        Ystatus=1;
+        break;
       case 1:
-         digitalWrite(MY0,LOW);
-         digitalWrite(MY2,HIGH);
-         Ystatus=2;
-         break; 
+        digitalWrite(MY0,LOW);
+        digitalWrite(MY1,HIGH);
+        digitalWrite(MY2,HIGH);
+        digitalWrite(MY3,LOW);
+        Ystatus=2;
+        break; 
       case 2:
-         digitalWrite(MY1,LOW);
-         digitalWrite(MY3,HIGH);
-         Ystatus=3;
-         break;
+        digitalWrite(MY0,LOW);
+        digitalWrite(MY1,HIGH);
+        digitalWrite(MY2,LOW);
+        digitalWrite(MY3,HIGH);
+        Ystatus=3;
+        break;
       case 3:
-         digitalWrite(MY2,LOW);
-         digitalWrite(MY0,HIGH);
-         Ystatus=0;
-         break;
+        digitalWrite(MY0,HIGH);
+        digitalWrite(MY1,LOW);
+        digitalWrite(MY2,LOW);
+        digitalWrite(MY3,HIGH);
+        Ystatus=0;
+        break;
       }
 }
 
 void S_CCY(){                                         //step counter clock wise motor Y
    switch(Ystatus){
       case 0:
-         digitalWrite(MY1,LOW);
-         digitalWrite(MY3,HIGH);
-         Ystatus=3;
-         break;
+        digitalWrite(MY0,LOW);
+        digitalWrite(MY1,HIGH);
+        digitalWrite(MY2,LOW);
+        digitalWrite(MY3,HIGH);
+        Ystatus=3;
+        break;
       case 3:
-         digitalWrite(MY0,LOW);
-         digitalWrite(MY2,HIGH);
-         Ystatus=2;
-         break; 
+        digitalWrite(MY0,LOW);
+        digitalWrite(MY1,HIGH);
+        digitalWrite(MY2,HIGH);
+        digitalWrite(MY3,LOW);
+        Ystatus=2;
+        break; 
       case 2:
-         digitalWrite(MY3,LOW);
-         digitalWrite(MY1,HIGH);
-         Ystatus=1;
-         break;
+        digitalWrite(MY0,HIGH);
+        digitalWrite(MY1,LOW);
+        digitalWrite(MY2,HIGH);
+        digitalWrite(MY3,LOW);
+        Ystatus=1;
+        break;
       case 1:
-         digitalWrite(MY2,LOW);
-         digitalWrite(MY0,HIGH);
-         Ystatus=0;
-         break;
-      }
-}
-
-void S_CCX(){                                           //step clock wise motor X
-   switch(Xstatus){
-      case 0:
-         digitalWrite(MX1,LOW);
-         digitalWrite(MX3,HIGH);
-         Xstatus=3;
-         break;
-      case 3:
-         digitalWrite(MX0,LOW);
-         digitalWrite(MX2,HIGH);
-         Xstatus=2;
-         break; 
-      case 2:
-         digitalWrite(MX3,LOW);
-         digitalWrite(MX1,HIGH);
-         Xstatus=1;
-         break;
-      case 1:
-         digitalWrite(MX2,LOW);
-         digitalWrite(MX0,HIGH);
-         Xstatus=0;
-         break;
-      }
-}
-
-void S_CX(){                                                //step counter clock wise motor X
-     switch(Xstatus){
-      case 0:
-         digitalWrite(MX3,LOW);
-         digitalWrite(MX1,HIGH);
-         Xstatus=1;
-         break;
-      case 1:
-         digitalWrite(MX0,LOW);
-         digitalWrite(MX2,HIGH);
-         Xstatus=2;
-         break; 
-      case 2:
-         digitalWrite(MX1,LOW);
-         digitalWrite(MX3,HIGH);
-         Xstatus=3;
-         break;
-      case 3:
-         digitalWrite(MX2,LOW);
-         digitalWrite(MX0,HIGH);
-         Xstatus=0;
-         break;
+        digitalWrite(MY0,HIGH);
+        digitalWrite(MY1,LOW);
+        digitalWrite(MY2,LOW);
+        digitalWrite(MY3,HIGH);
+        Ystatus=0;
+        break;
       }
 }
 
