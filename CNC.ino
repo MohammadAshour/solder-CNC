@@ -1,5 +1,5 @@
 #include <EEPROM.h>
-int MX0=2,MX1=3,MX2=4,MX3=5;              //X motor
+int MX0=11,MX1=3,MX2=4,MX3=5;             //X motor
 int MY0=7,MY1=8,MY2=9,MY3=10;             //Y motor
 //int RE=8;                               //Pedal relay
 //int start=3;                            //start button
