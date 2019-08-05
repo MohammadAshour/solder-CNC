@@ -230,7 +230,7 @@ void S_CCX(){                                         //step counter clock wise 
       }
 }
 
-void S_CY(){                                  //step clock wise motor Y
+void S_CCY(){                                  //step clock wise motor Y
      switch(Ystatus){
       case 0:
         digitalWrite(MY0,HIGH);
@@ -263,7 +263,7 @@ void S_CY(){                                  //step clock wise motor Y
       }
 }
 
-void S_CCY(){                                         //step counter clock wise motor Y
+void S_CY(){                                         //step counter clock wise motor Y
    switch(Ystatus){
       case 0:
         digitalWrite(MY0,LOW);
