@@ -1,9 +1,9 @@
 #include <EEPROM.h>
 int MX0=11,MX1=3,MX2=4,MX3=5;             //X motor
 int MY0=7,MY1=8,MY2=9,MY3=10;             //Y motor
-//int RE=8;                               //Pedal relay
+int RE=12;                               //Pedal relay
 //int start=3;                            //start button
-//int reset=2;                            //pause and reset interrupts
+int reset=2;                            //pause and reset interrupts
 //int limitUp=A4,limitLeft=A5;
 
 
@@ -41,7 +41,7 @@ void setup() {
   //pinMode(limitLeft,INPUT);
   //pinMode(start,INPUT);
   
-//  attachInterrupt(0,resetM,RISING);
+  //attachInterrupt(0,resetM,RISING);
 
   idle();
 
@@ -51,6 +51,7 @@ void setup() {
   plateNum=0;
 //  running=0;
   running=1;
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -63,7 +64,7 @@ void loop() {
   //set variables of the selected plate
   //numX must be even number or last column will be neglected
   switch(plateNum){
-    case 0: numX=6;numY=7;disX=175;disY=137;break;
+    case 0: numX=5;numY=3;disX=137;disY=175;break;
     case 1: numX=4;numY=5;disX=15;disY=20;break;
     case 2: numX=7;numY=7;disX=2;disY=3;break;
     case 3: numX=2;numY=1;disX=2;disY=3;break;
@@ -101,9 +102,18 @@ void loop() {
       if(i!=numX/2-1){                              //prevent moving left in the last round
         moveRight(disX);
       }
-    
+        
+    }
+    if(numX%2!=0){
+      moveRight(disX);
+      for(int j=1;j<numY;j++){                      //despense and move down
+        despenser();                              
+        moveDown(disY);
+      }
+      despenser();                              
     }
     running=0;
+    homming=1;
   }
 }
 
@@ -116,20 +126,28 @@ void resetM(){
 }
 
 void goHome(){
-  while(!stopUp||!stopLeft){                        //if any limit switch not reached, continue
+/*  while(!stopUp||!stopLeft){                        //if any limit switch not reached, continue
     //if(digitalRead(limitUp))stopUp=1;               //upper limit reached
     //if(digitalRead(limitLeft))stopLeft=1;           //letf limit reached
     if(!stopUp)S_CY();                              //if upper limit not reached move up
     if(!stopLeft)S_CCX();                           //if left limit not reached move left
+    
   }
+   */
+   while(1){            //test homming
+      S_CY();
+      S_CCX();
+      delay(Mdelay);
+      if(Serial.read()=='s') break;
+    }
   homming=0;
 }
 
 void despenser(){
   if(running){
- //   digitalWrite(RE,HIGH);
+    digitalWrite(RE,HIGH);
     delay(Ddelay);
-   // digitalWrite(RE,LOW);   
+    digitalWrite(RE,LOW);   
   }
 }
 
