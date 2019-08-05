@@ -164,7 +164,7 @@ void idle(){
 //   digitalWrite(RE,LOW);
 }
 
-void S_CX(){                                  //step clock wise motor Y
+void S_CCX(){                                  //step clock wise motor Y
      switch(Xstatus){
       case 0:
         digitalWrite(MX0,HIGH);
@@ -197,7 +197,7 @@ void S_CX(){                                  //step clock wise motor Y
       }
 }
 
-void S_CCX(){                                         //step counter clock wise motor Y
+void S_CX(){                                         //step counter clock wise motor Y
    switch(Xstatus){
       case 0:
         digitalWrite(MX0,LOW);
