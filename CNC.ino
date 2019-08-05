@@ -1,13 +1,13 @@
 #include <EEPROM.h>
-int MX0=9,MX1=10,MX2=11,MX3=12;         //X motor
-int MY0=A0,MY1=A1,MY2=A2,MY3=A3;        //Y motor
-int RE=8;                               //Pedal relay
-int start=3;                            //start button
-int reset=2;                            //pause and reset interrupts
-int limitUp=A4,limitLeft=A5;
+int MX0=2,MX1=3,MX2=4,MX3=5;              //X motor
+int MY0=7,MY1=8,MY2=9,MY3=10;             //Y motor
+//int RE=8;                               //Pedal relay
+//int start=3;                            //start button
+//int reset=2;                            //pause and reset interrupts
+//int limitUp=A4,limitLeft=A5;
 
 
-int s1=6,s2=5,s3=4;
+//int s1=6,s2=5,s3=4;
 
 int running;                          //to check if maching in runnning mode
 int homming;                            //to check if maching is going to home 0,0
@@ -19,15 +19,15 @@ int numX,numY,disX,disY;                //variables determind by the plate numbe
 int Ystatus=0;                          //Motors status
 int Xstatus=0;
 
-int Mdelay=100;                           //delay for motors         
+int Mdelay=2;                           //delay for motors         
 int Ddelay=1000;                        //delay for despenser
 
 void setup() {
-  pinMode(s1,INPUT);
-  pinMode(s2,INPUT);
-  pinMode(s3,INPUT);
+  //pinMode(s1,INPUT);
+  //pinMode(s2,INPUT);
+  //pinMode(s3,INPUT);
   
-  pinMode(RE,OUTPUT);
+//  pinMode(RE,OUTPUT);
   pinMode(MX0,OUTPUT);
   pinMode(MX1,OUTPUT);
   pinMode(MX2,OUTPUT);
@@ -37,11 +37,11 @@ void setup() {
   pinMode(MY2,OUTPUT);
   pinMode(MY3,OUTPUT);
   
-  pinMode(limitUp,INPUT);
-  pinMode(limitLeft,INPUT);
-  pinMode(start,INPUT);
+ // pinMode(limitUp,INPUT);
+  //pinMode(limitLeft,INPUT);
+  //pinMode(start,INPUT);
   
-  attachInterrupt(0,resetM,RISING);
+//  attachInterrupt(0,resetM,RISING);
 
   idle();
 
@@ -49,20 +49,21 @@ void setup() {
   stopUp=0;
   stopLeft=0;
   plateNum=0;
-  running=0;
+//  running=0;
+  running=1;
 }
 
 void loop() {
   plateNum=0;
-  if(digitalRead(s1))plateNum+=1;
-  if(digitalRead(s2))plateNum+=2;
-  if(digitalRead(s3))plateNum+=4;
+  //if(digitalRead(s1))plateNum+=1;
+  //if(digitalRead(s2))plateNum+=2;
+  //if(digitalRead(s3))plateNum+=4;
   
 
   //set variables of the selected plate
   //numX must be even number or last column will be neglected
   switch(plateNum){
-    case 0: numX=10;numY=7;disX=10;disY=20;break;
+    case 0: numX=6;numY=7;disX=175;disY=137;break;
     case 1: numX=4;numY=5;disX=15;disY=20;break;
     case 2: numX=7;numY=7;disX=2;disY=3;break;
     case 3: numX=2;numY=1;disX=2;disY=3;break;
@@ -75,7 +76,7 @@ void loop() {
   
   
   //start the program
-  if(digitalRead(start)) running=1;
+//  if(digitalRead(start)) running=1;
 
   
   if(homming)goHome();  
@@ -116,8 +117,8 @@ void resetM(){
 
 void goHome(){
   while(!stopUp||!stopLeft){                        //if any limit switch not reached, continue
-    if(digitalRead(limitUp))stopUp=1;               //upper limit reached
-    if(digitalRead(limitLeft))stopLeft=1;           //letf limit reached
+    //if(digitalRead(limitUp))stopUp=1;               //upper limit reached
+    //if(digitalRead(limitLeft))stopLeft=1;           //letf limit reached
     if(!stopUp)S_CY();                              //if upper limit not reached move up
     if(!stopLeft)S_CCX();                           //if left limit not reached move left
   }
@@ -126,9 +127,9 @@ void goHome(){
 
 void despenser(){
   if(running){
-    digitalWrite(RE,HIGH);
+ //   digitalWrite(RE,HIGH);
     delay(Ddelay);
-    digitalWrite(RE,LOW);   
+   // digitalWrite(RE,LOW);   
   }
 }
 
@@ -144,7 +145,7 @@ void idle(){
    digitalWrite(MY2,LOW);
    digitalWrite(MY3,LOW);
    
-   digitalWrite(RE,LOW);
+//   digitalWrite(RE,LOW);
 }
 
 void S_CX(){                                  //step clock wise motor Y
