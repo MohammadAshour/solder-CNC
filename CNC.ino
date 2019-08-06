@@ -154,8 +154,10 @@ void goHome(){
 void despenser(){
   if(running){
     digitalWrite(RE,HIGH);
+    delay(100);
+    digitalWrite(RE,LOW); 
     delay(Ddelay);
-    digitalWrite(RE,LOW);   
+      
   }
 }
 
