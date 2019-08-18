@@ -133,7 +133,6 @@ void loop() {
 
 void resetM(){
   running=0;                                      //to break moving functions
-  homming=1;                                      //to start going home function  
 }
 
 void goHome(){
