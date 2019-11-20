@@ -62,6 +62,7 @@ void setup() {
   running=0;
 
   idle();
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -73,10 +74,10 @@ void loop() {
   //set variables of the selected plate
   //numX must be even number or last column will be neglected
   switch(plateNum){
-    case 0: numX=3;numY=3;disX=175;disY=137;break;
+    case 0: numX=6;numY=6;disX=175;disY=165;break;
     case 1: numX=6;numY=7;disX=175;disY=137;break;
-    case 2: numX=2;numY=4;disX=175;disY=137;break;
-    case 3: numX=1;numY=6;disX=175;disY=137;break;
+    case 2: numX=6;numY=2;disX=175;disY=460;break;
+    case 3: numX=6;numY=5;disX=175;disY=178;break;
     case 4: numX=6;numY=5;disX=175;disY=137;break;
     case 5: numX=6;numY=1;disX=175;disY=137;break;
     case 6: numX=2;numY=2;disX=175;disY=137;break;
@@ -93,9 +94,12 @@ void loop() {
   
   while(running){
     //go to origin
-    goHome();
-
+    goHome(); 
     
+    switch(plateNum){
+      case 2:moveUp(20);break;
+    }
+  
     for(int i=0;i<numY/2;i++){
         
       for(int j=1;j<numX;j++){                      //despense and move down
@@ -147,6 +151,8 @@ void goHome(){
     if(!stopLeft)S_CY();                           //if left limit not reached move left
     delay(Mdelay);
   }
+  delay(500);
+  
   homming=0;
   idle();                                           //no brake
 }

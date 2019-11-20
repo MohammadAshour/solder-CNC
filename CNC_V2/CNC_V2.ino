@@ -1,8 +1,8 @@
 #include <EEPROM.h>
-int m1e=3;          //motor 1 enable
-int m2e=4;          //motor 2 enable
-int clockPin=5;
-int dataPin=6;
+int dataPin=2;
+int clockPin=3;
+int m1e=4;          //motor 1 enable
+int m2e=5;          //motor 2 enable
 
 void setup() {
   pinMode(m1e,OUTPUT);
@@ -13,9 +13,12 @@ void setup() {
   digitalWrite(m1e,HIGH);
 
   int32_t word0=00000000000000111111111111000000;
-  int32_t word1=00000000000001111111111111000000;
+  int32_t word1=00000000000001000000000000000001;
   
   int32_t m1f=word0||101100;
+
+  writeWord(0,00000000000000111111111111101100);
+  writeWord(0,word1);
 }
 
 void loop() {
